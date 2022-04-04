@@ -20,7 +20,10 @@ export default function Procs() {
     } ,{
       actions : {
         addProc(leaf, proc) {
+          console.log('--- adding proc', proc);
           const {name, order, description} = proc;
+          leaf.do.setShowForm(false);
+          leaf.do.setStatus('updating');
           axios.post('/api/proc', {name, description, order})
             .then(leaf.do.load)
             .catch (err => {

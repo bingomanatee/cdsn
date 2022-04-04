@@ -1,10 +1,10 @@
-import * as React from "react"
-import colors from "src/util/colors"
-const { useContext } = React
-import { AppContext, ContextType } from "../../../Context"
+import * as React from "react";
+import colors from "src/util/colors";
+const { useContext } = React;
+import { AppContext, ContextType } from "../../../Context";
 
 export default () => {
-  const { todos, toggleCompleted } = useContext<ContextType>(AppContext)
+  const { todos, toggleCompleted } = useContext<ContextType>(AppContext);
   if (todos) {
     if (todos.length) {
       return (
@@ -23,10 +23,10 @@ export default () => {
             </li>
           ))}
         </ul>
-      )
+      );
     } else {
-      return "No Todos"
+      return "No Todos";
     }
   }
-  return null
-}
+  return null;
+};

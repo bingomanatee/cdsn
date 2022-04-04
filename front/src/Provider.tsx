@@ -1,31 +1,31 @@
-import * as React from "react"
-import { Todo } from "./types"
-import { Provider } from "./Context"
-const clonedeep = require("lodash.clonedeep")
+import * as React from "react";
+import { Todo } from "./types";
+import { Provider } from "./Context";
+const clonedeep = require("lodash.clonedeep");
 
 export type State = {
-  todos?: Todo[]
-}
+  todos?: Todo[];
+};
 
 class AppProvider extends React.Component<{}, State> {
   state = {
     todos: null
-  }
+  };
   componentDidMount() {
-    this.loadData()
+    this.loadData();
   }
   loadData = () => {
     fetch("https://jsonplaceholder.typicode.com/todos")
       .then((response) => response.json())
-      .then((json) => this.setState({ todos: json }))
-  }
+      .then((json) => this.setState({ todos: json }));
+  };
   toggleCompleted = (id: number) => {
     // Use clonedeep because we want to copy the full object, not the reference
-    const todos = clonedeep(this.state.todos)
-    const todo = todos.find((t) => t.id === id)
-    todo.completed = !todo.completed
-    this.setState({ todos })
-  }
+    const todos = clonedeep(this.state.todos);
+    const todo = todos.find((t) => t.id === id);
+    todo.completed = !todo.completed;
+    this.setState({ todos });
+  };
   render() {
     return (
       <Provider
@@ -37,8 +37,8 @@ class AppProvider extends React.Component<{}, State> {
       >
         {this.props.children}
       </Provider>
-    )
+    );
   }
 }
 
-export default AppProvider
+export default AppProvider;

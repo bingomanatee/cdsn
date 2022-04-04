@@ -118,4 +118,4 @@ export default {
   },
   boxShadowMed: "rgb(42,67,101, .24)",
   boxShadowLight: "rgb(42,67,101, .12)"
-}
+};

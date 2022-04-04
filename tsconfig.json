@@ -15,7 +15,8 @@
       "skipLibCheck": true,
       "baseUrl": "./"
     },
-    "include": ["src/**/*.tsx", "src/**/*.ts"],
-    "exclude": ["node_modules", "typings/*"]
+    "include": ["front/**/*.tsx", "front/**/*.ts", "back/**/*.tsx", "back/**/*.ts"],
+    "exclude": [
+      "front/node_modules", "typings/*"]
   }
   

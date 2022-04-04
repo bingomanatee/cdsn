@@ -5,5 +5,13 @@ import { Home } from "grommet-icons";
 
 export function HomeIcon() {
   const nav = useNavigate();
-  return <Button icon={<Home />} hoverIndicator onClick={ () => {nav('/', {replace: true});}} />;
+  return (
+    <Button
+      icon={<Home />}
+      hoverIndicator
+      onClick={() => {
+        nav("/", { replace: true });
+      }}
+    />
+  );
 }
