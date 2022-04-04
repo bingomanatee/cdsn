@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model task {
+  id             String         @id @default(uuid())
+  name           String
+  proc_id        String
+  proc           process        @relation(fields: [proc_id], references: [id])
+  type           String
+  status         status         @default(PENDING)
+  priority       Int            @default(0)
+  description    String?
+  created_at     DateTime       @default(now())
+  completed_at   DateTime
+  error          Json?
+  parent_task_id String?
+  parent_task    task?          @relation("parent", fields: [parent_task_id], references: [id])
+  child_tasks    task[]         @relation("parent")
+  task_artifacts task_artifact[]
+}
+
+model process {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  order       Int     @default(0)
+
+  next_proc_ids String[]
+  next_procs    process[] @relation("next_proc")
+  prev_procs    process[] @relation("next_proc")
+  task          task[]
+  triggers      process_trigger[] @relation("process_triggers")
+}
+
+model process_trigger {
+  id          String      @id @default(uuid())
+  proc_id     String
+  name        String?
+  type        String?
+  query       String?
+  query_value String?
+  query_comp  comp?       @default(EQ)
+  proc        process     @relation("process_triggers", fields: [proc_id], references: [id])
+}
+
+enum comp {
+    EQ
+    LT
+    GT
+    NE
+    REGEX
+    TRUE
+    FALSE
+}
+
+model artifact {
+  id             String         @id @default(uuid())
+  name           String
+  type           String
+  description    String?
+  data           Json?
+  task_artifacts task_artifact[]
+}
+
+model task_artifact {
+  id          String           @id @default(uuid())
+  task_id     String
+  artifact_id String
+  task        task             @relation(fields: [task_id], references: [id])
+  artifact    artifact         @relation(fields: [artifact_id], references: [id])
+  type        task_artifact_type
+}
+
+enum task_artifact_type {
+  INPUT
+  OUTPUT
+}
+
+enum status {
+  PENDING
+  STARTED
+  FINISHED
+  FAILED
+  STALE
+}
