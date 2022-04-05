@@ -20,6 +20,7 @@ export default ({
   compType = FieldType.text,
   type = TextType.text,
   children = null,
+  filter = null,
   ...props
 }) => {
   let comp = children;
@@ -32,7 +33,13 @@ export default ({
             type={type}
             {...props}
             value={branch.value.value}
-            onChange={branch.do.update}
+            onChange={(event) => {
+              if (filter) {
+                branch.do.updateValue(filter(event.target.value));
+              } else {
+                branch.do.update(event);
+              }
+            }}
           />
         );
         break;

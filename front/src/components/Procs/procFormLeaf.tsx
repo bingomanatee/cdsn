@@ -8,7 +8,7 @@ function validateTrigger(trigger) {
     if (!isObj(trigger)) {
       throw new Error("trigger must be an object");
     }
-    if (!(trigger.query_value && isStr(trigger.query))) {
+    if (!(trigger.query_comp_value && isStr(trigger.query))) {
       throw new Error("trigger query must be a non-empty string");
     }
     if (!trigger.comp) {
@@ -40,28 +40,29 @@ export function procFormLeaf(addProc, cancel) {
     },
     {
       selectors: {
-        isValid({ name, type, order, description, triggers }) {
+        isValid({ name, type, description, triggers }) {
           if (!triggers.$isValid) {
-            console.log('trigger error: ', triggers);
+            console.log("trigger error: ", triggers);
           }
-          return name.$isValid
-            && order.$isValid
-            && description.$isValid
-            && type.$isValid
-            && triggers.$isValid;
+          return (
+            name.$isValid &&
+            description.$isValid &&
+            type.$isValid &&
+            triggers.$isValid
+          );
         },
-        isValidProc({ name, type, order, description, triggers }) {
-          return name.$isValid
-            && order.$isValid
-            && description.$isValid
-            && type.$isValid;
+        isValidProc({ name, type, description, triggers }) {
+          return (
+            name.$isValid &&
+            description.$isValid &&
+            type.$isValid
+          );
         },
-        summary({ name, order, type, description, triggers }) {
+        summary({ name, type, description, triggers }) {
           return {
             name: name.value,
             type: type.value,
             description: description.value,
-            order: order.value,
             triggers: triggers.value
           };
         }
@@ -74,7 +75,6 @@ export function procFormLeaf(addProc, cancel) {
           const triggersBranch = leaf.branch("triggers");
           const update = [...triggersBranch.value.value];
           update[leaf.value.editing.index] = trigger;
-          const triggersBranch = leaf.branch("triggers");
           triggersBranch.do.updateValue(update);
           leaf.do.edit();
         },
@@ -90,19 +90,21 @@ export function procFormLeaf(addProc, cancel) {
         advance(leaf, index = null) {
           if (index === null) {
             leaf.do.setPage(leaf.value.page + 1);
-          } else
-            leaf.do.setPage(index);
+          } else leaf.do.setPage(index);
         },
         reset(leaf) {
           leaf.branch("name").do.reset();
           leaf.branch("type").do.reset();
-          leaf.branch("order").do.reset(0);
           leaf.branch("description").do.reset();
           leaf.branch("triggers").do.reset([]);
           leaf.do.setStatus("new");
         },
         save(leaf) {
-          let { $summary } = leaf.valueWithSelectors();
+          const { $summary } = leaf.valueWithSelectors();
+          $summary.triggers = {
+            create: $summary.triggers
+          };
+
           addProc($summary);
         }
       },
@@ -114,21 +116,6 @@ export function procFormLeaf(addProc, cancel) {
         type: makeField("type", "", (value) => {
           if (!value.length) return "type must be present";
         }),
-        order: makeField(
-          "order",
-          0,
-          (value) => {
-            if (typeof value === "number") {
-              return null;
-            } else if (typeof value === "string") {
-              if (!/^[\d.]+$/.test(value)) {
-                return "must be a number or numeric string";
-              }
-            }
-            return null;
-          },
-          true
-        ),
         description: makeField("description", "", null, true),
         triggers: makeField("triggers", [], (triggers) => {
           if (!isArr(triggers)) return "triggers must be an array";

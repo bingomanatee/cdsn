@@ -11,10 +11,10 @@ export const FormRow = ({ children, noGrid = false }) => {
     );
   }
   return (
-    <Box direction={"row"} margin={"small"} align="center">
+    <Box direction={"row"} margin={"xsmall"} align="center">
       <Grid
         rows={["auto", "auto"]}
-        columns={["1/3", "2/3"]}
+        columns={["1/3", "auto"]}
         gap="small"
         fill={"horizontal"}
         areas={[
@@ -30,7 +30,12 @@ export const FormRow = ({ children, noGrid = false }) => {
 };
 
 export const Fields = ({ children }) => (
-  <Box direction="column" style={{ maxWidth: "800px" }}>
+  <Box
+    direction="column"
+    style={{ maxWidth: "800px" }}
+    gridArea="fields"
+    overflow={{ horizontal: "hidden", vertical: "auto" }}
+  >
     {children}
   </Box>
 );

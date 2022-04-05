@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { FormHeader, TriggerPaginator } from "./utils";
-import { Fields, FormRow } from "../../../utils/FormRow";
+import { Fields} from "../../../utils/FormRow";
 import FieldRow from "../../../utils/FieldRow";
-import { FieldType } from "../../../utils/types";
+import ButtonRow from "../../../utils/ButtonRow";
+
+import { FieldType, TextType } from "../../../utils/types";
 import { Button, Select, Spinner } from "grommet";
-import { makePage2Leaf } from "./MakePage2Leaf";
-import { Add, Edit, Save, Trigger, Close } from "grommet-icons";
+import { triggerLeaf } from "./triggerLeaf";
+import { Add, Edit, Save, Close } from "grommet-icons";
 
 export const Page2 = ({ state, formLeaf }) => {
-  const [triggerLeaf, setTriggerLeaf] = useState(null);
+  const [tLeaf, setTLeaf] = useState(null);
   const [triggerState, setTriggerState] = useState(null);
 
   useEffect(() => {
-    const leaf = makePage2Leaf(formLeaf);
+    const leaf = triggerLeaf(formLeaf);
 
-    setTriggerLeaf(leaf);
+    setTLeaf(leaf);
     setTriggerState(leaf.value);
     const sub = leaf.subscribe((value) => {
       console.log("trigger state: ", value);
@@ -26,19 +28,28 @@ export const Page2 = ({ state, formLeaf }) => {
     };
   }, []);
 
-  if (!(triggerState && triggerLeaf && formLeaf)) {
+  if (!(triggerState && tLeaf && formLeaf)) {
     return <Spinner message="page 2 not ready" size="large" color="control" />;
   }
 
   return (
     <>
-      <FormHeader label={"Add Trigger(s)"} formLeaf={triggerLeaf} />
+      <FormHeader label={"Add Trigger(s)"} formLeaf={tLeaf} />
       <Fields>
-        <FieldRow label="Name" branch={triggerLeaf.branch("name")} />
+        <FieldRow label="Name" branch={tLeaf.branch("name")} />
 
-        <FieldRow label="Query"
-                  compType={FieldType.textarea}
-                  branch={triggerLeaf.branch("query")} />
+        <FieldRow label="Type" branch={tLeaf.branch("type")} />
+        <FieldRow
+          label={"Order"}
+          branch={tLeaf.branch("order")}
+          type={TextType.number}
+          filter={(value) => Number.parseInt(value, 10)}
+        />
+        <FieldRow
+          label="Query"
+          compType={FieldType.textarea}
+          branch={tLeaf.branch("query")}
+        />
 
         <FieldRow label="Comparator" compType={FieldType.child}>
           <Select
@@ -46,7 +57,7 @@ export const Page2 = ({ state, formLeaf }) => {
             value={state.query_comp}
             defaultValue={"TRUE"}
             onChange={({ option }) => {
-              triggerLeaf.do.setQuery_comp(option);
+              tLeaf.do.setQuery_comp(option);
             }}
           />
         </FieldRow>
@@ -54,76 +65,62 @@ export const Page2 = ({ state, formLeaf }) => {
         {triggerState.$useQueryValue ? (
           <FieldRow
             label="Compare To"
-            branch={triggerLeaf.branch("query_value")}
+            branch={tLeaf.branch("query_comp_value")}
           />
         ) : (
           <></>
         )}
 
-        <TriggerPaginator formLeaf={formLeaf} triggerLeaf={triggerLeaf} />
-        <FormRow noGrid>
-          {state.editing.type === "trigger" ? (
-            <>
+        <TriggerPaginator formLeaf={formLeaf} triggerLeaf={tLeaf} />
+      </Fields>
+      <ButtonRow>
+
+        {state.editing.type === "trigger" ? (
+          <>
             <Button
               icon={<Edit />}
               disabled={!triggerState.$isValid}
               reverse
               label="Update Trigger"
               onClick={() => {
-                triggerLeaf.do.updateTrigger();
+                tLeaf.do.updateTrigger();
               }}
             />
-              <Button
-                icon={<Close />}
-                primary
-                reverse
-                label="Cancel Trigger Edit"
-                onClick={() => {
-                  triggerLeaf.do.reset();
-                  formLeaf.do.edit();
-                }}
-              />
-            </Edit>
-          ) : (
-            <>
-              <Button
-                icon={<Add />}
-                disabled={!triggerState.$isValid}
-                reverse
-                label="Add Trigger"
-                onClick={() => {
-                  triggerLeaf.do.addTrigger();
-                }}
-              />
-              <Button
-                icon={<Save />}
-                disabled={!triggerState.$isValid}
-                primary
-                reverse
-                label="Add Trigger and Save Process"
-                onClick={() => {
-                  triggerLeaf.do.addTrigger();
-                  formLeaf.do.advance(2);
-                }}
-              />
-              <Button
-                icon={<Save />}
-                disabled={!state.$isValid}
-                primary
-                reverse
-                label="Save Process"
-                onClick={() => {
-                  triggerLeaf.do.addTrigger();
-                  formLeaf.do.advance(2);
-                }}
-              />
-            </>
-          )}
-        </FormRow>
-        <pre>
-          {JSON.stringify(triggerState, true, 2)}
-        </pre>
-      </Fields>
+            <Button
+              icon={<Close />}
+              primary
+              reverse
+              label="Cancel Trigger Edit"
+              onClick={() => {
+                tLeaf.do.reset();
+                formLeaf.do.edit();
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <Button
+              icon={<Add />}
+              disabled={!triggerState.$isValid}
+              reverse
+              label="Save Trigger"
+              onClick={() => {
+                tLeaf.do.addTrigger();
+              }}
+            />
+            <Button
+              icon={<Save />}
+              disabled={!state.$isValid}
+              primary
+              reverse
+              label="Save Process"
+              onClick={() => {
+                formLeaf.do.advance(2);
+              }}
+            />
+          </>
+        )}
+      </ButtonRow>
     </>
   );
 };

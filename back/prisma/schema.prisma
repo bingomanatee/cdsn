@@ -32,8 +32,7 @@ model process {
   id          String  @id @default(uuid())
   name        String
   description String?
-  order       Int     @default(0)
-
+  type        String?
   next_proc_ids String[]
   next_procs    process[] @relation("next_proc")
   prev_procs    process[] @relation("next_proc")
@@ -46,8 +45,9 @@ model process_trigger {
   proc_id     String
   name        String?
   type        String?
+  order       Int     @default(0)
   query       String?
-  query_value String?
+  query_comp_value String?
   query_comp  comp?       @default(EQ)
   proc        process     @relation("process_triggers", fields: [proc_id], references: [id])
 }

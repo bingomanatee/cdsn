@@ -1,27 +1,7 @@
 import HeadingWrapper from "../../HeadingWrapper";
-import { Button, Box } from "grommet";
+import { Box, Button } from "grommet";
 import { FormClose, Trigger } from "grommet-icons";
 import React from "react";
-import styled from "styled-components";
-
-export const FormWrapper = styled.div`
-  margin: 2rem;
-  min-width: 800px;
-  max-width: 90vw;
-  height: ${({ height }) => height || "auto"};
-  pre {
-    max-height: 100px;
-    overflow: scroll;
-  }
-`;
-/**
- *  console.log("button clicked; adding ", state, "to", addProc);
- addProc({
-          name: state.name.value,
-          description: state.description.value,
-          order: state.order.value
-        });
- */
 
 export const FormHeader = ({ formLeaf, level = 1, label }) => {
   return (

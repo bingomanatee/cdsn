@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Layer } from "grommet";
-import { FormWrapper } from "./pages/utils";
 import { Page1 } from "./pages/Page1";
 import { Page2 } from "./pages/Page2";
 import { Page3 } from "./pages/Page3";
 import { Spinner } from "grommet/es6";
 import { procFormLeaf } from "./procFormLeaf";
+import { FormWrapper } from "../../utils/FormWrapper";
 
 export default ({ addProc, cancel }) => {
   const [formLeaf, setFormLeaf] = useState(null);

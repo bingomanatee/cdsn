@@ -5,6 +5,7 @@ import { FieldType, TextType } from "../../../utils/types";
 import { Button, Spinner } from "grommet";
 import React from "react";
 import { Next } from "grommet-icons";
+import ButtonRow from "../../../utils/ButtonRow";
 
 export const Page1 = ({ state, formLeaf }) => {
   if (!(state && formLeaf)) {
@@ -21,25 +22,19 @@ export const Page1 = ({ state, formLeaf }) => {
           branch={formLeaf.branch("description")}
           compType={FieldType.textarea}
         />
-        <FieldRow
-          label={"Order"}
-          branch={formLeaf.branch("order")}
-          type={TextType.number}
-        />
-
-        <FormRow noGrid>
-          <Button
-            icon={<Next />}
-            disabled={!state.$isValidProc}
-            primary
-            reverse
-            label="Add Trigger"
-            onClick={() => {
-              formLeaf.do.advance();
-            }}
-          />
-        </FormRow>
       </Fields>
+      <ButtonRow>
+        <Button
+          icon={<Next />}
+          disabled={!state.$isValidProc}
+          primary
+          reverse
+          label="Add Trigger"
+          onClick={() => {
+            formLeaf.do.advance();
+          }}
+        />
+      </ButtonRow>
     </>
   );
 };

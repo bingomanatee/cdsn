@@ -1,7 +1,7 @@
 import { isStr, Leaf } from "@wonderlandlabs/forest";
 import { makeField } from "../../../utils/MakeField";
 
-export function makePage2Leaf(formLeaf) {
+export function triggerLeaf(formLeaf) {
   return new Leaf(
     { query_comp: "TRUE" },
     {
@@ -17,24 +17,24 @@ export function makePage2Leaf(formLeaf) {
           }
         },
         addTrigger(leaf) {
-          formLeaf.do.addTrigger(leaf.valueWithSelectors().$trigger);
+          formLeaf.do.addTrigger(leaf.valueWithSelectors().$summary);
           leaf.do.reset();
         },
         updateTrigger(leaf) {
-          formLeaf.do.updateTrigger(leaf.valueWithSelectors().$trigger);
+          formLeaf.do.updateTrigger(leaf.valueWithSelectors().$summary);
           leaf.do.reset();
         },
         reset(leaf) {
           leaf.branch("name").do.reset();
+          leaf.branch("type").do.reset('');
           leaf.branch("query").do.reset();
-          leaf.branch("query_value").do.reset();
-          leaf.do.setQuery_comp("TRUE");
-          console.log("leaf after reset:", leaf);
+          leaf.branch("order").do.reset(0);
+          leaf.branch("query_comp_value").do.reset();
+        //  leaf.do.setQuery_comp("TRUE");
         }
       },
       selectors: {
         useQueryValue({ query_comp }) {
-          console.log('uqf value: ', query_comp);
           switch (query_comp) {
             case "TRUE":
               return false;
@@ -48,12 +48,19 @@ export function makePage2Leaf(formLeaf) {
               return true;
           }
         },
-        trigger(value) {
-          const { name, query, query_comp } = value;
-          return { name: name.value, query: query.value, query_comp };
+        summary(value) {
+          const { name, query, type, order, query_comp, query_comp_value } = value;
+          return {
+            name: name.value,
+            type: type.value,
+            query: query.value,
+            order: order.value,
+            query_comp,
+            query_comp_value: query_comp_value.value
+          };
         },
         isValid({ name, query }) {
-          return (name.$isValid && query.$isValid);
+          return name.$isValid && query.$isValid;
         }
       },
       branches: {
@@ -65,11 +72,34 @@ export function makePage2Leaf(formLeaf) {
           },
           true
         ),
-        query_value: makeField(
-          "query_value",
+        order: makeField(
+          "order",
+          0,
+          (value) => {
+            if (typeof value === "number") {
+              return null;
+            } else if (typeof value === "string") {
+              if (!/^[\d.]+$/.test(value)) {
+                return "must be a number or numeric string";
+              }
+            }
+            return null;
+          },
+          true
+        ),
+        type: makeField(
+          "type",
           "",
           (value) => {
-            if (!isStr(value)) return "query_value must be a string";
+            if (!isStr(value)) return "Type must be a string";
+          },
+          true
+        ),
+        query_comp_value: makeField(
+          "query_comp_value",
+          "",
+          (value) => {
+            if (!isStr(value)) return "query_comp_value must be a string";
           },
           true
         ),
