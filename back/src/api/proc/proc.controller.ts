@@ -19,7 +19,7 @@ export class ProcController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.procService.findOne(+id);
+    return this.procService.findOne(id);
   }
 
   @Patch(':id')

@@ -7,7 +7,8 @@ export default () => {
       procs: [],
       status: "pending",
       error: null,
-      showForm: false
+      showForm: false,
+      id: ""
     },
     {
       actions: {
@@ -23,10 +24,14 @@ export default () => {
               leaf.do.setStatus("error");
             });
         },
+        open(leaf, proc) {
+          leaf.do.showForm(proc.id);
+        },
         cancelShowForm(leaf) {
           leaf.do.setShowForm(false);
         },
-        showForm(leaf) {
+        showForm(leaf, id = "") {
+          leaf.do.setId(id);
           leaf.do.setShowForm(true);
         },
         onLoad(leaf, response) {

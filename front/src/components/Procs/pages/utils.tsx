@@ -3,16 +3,10 @@ import { Box, Button } from "grommet";
 import { FormClose, Trigger } from "grommet-icons";
 import React from "react";
 
-export const FormHeader = ({ formLeaf, level = 1, label }) => {
+export const FormHeader = ({ cancel, level = 1, label }) => {
   return (
     <HeadingWrapper level={level} label={label}>
-      <Button
-        onClick={() => {
-          formLeaf.do.cancel();
-        }}
-        icon={<FormClose />}
-        plain
-      />
+      <Button onClick={cancel} icon={<FormClose />} plain />
     </HeadingWrapper>
   );
 };
@@ -24,7 +18,7 @@ function triggerLabel(trigger, i) {
   return `(trigger ${i + 1}`;
 }
 
-const TriggerButton = ({ formLeaf, triggerLeaf, trigger, i }) => {
+const TriggerButton = ({ formLeaf, trigger, i }) => {
   let color = "light-4";
   const { type, index } = formLeaf.value.editing;
   if (type === "trigger" && i === index) {
@@ -39,22 +33,17 @@ const TriggerButton = ({ formLeaf, triggerLeaf, trigger, i }) => {
       label={triggerLabel(trigger, i)}
       onClick={() => {
         formLeaf.do.edit("trigger", i);
-        triggerLeaf.do.loadTrigger(i);
+        formLeaf.do.advance(1);
       }}
     />
   );
 };
 
-export const TriggerPaginator = ({ formLeaf, triggerLeaf }) => {
+export const TriggerPaginator = ({ formLeaf }) => {
   return (
     <Box direction="row" fill="horizontal">
       {formLeaf.value.triggers.value.map((trigger, i) => (
-        <TriggerButton
-          formLeaf={formLeaf}
-          triggerLeaf={triggerLeaf}
-          trigger={trigger}
-          i={i}
-        />
+        <TriggerButton formLeaf={formLeaf} trigger={trigger} i={i} />
       ))}
     </Box>
   );

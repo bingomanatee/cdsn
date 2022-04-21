@@ -39,11 +39,16 @@ export default function Procs() {
         />
       </Box>
 
-      {state.status === "loaded" ? <ProcTable procs={state.procs} /> : ""}
+      {state.status === "loaded" ? (
+        <ProcTable procs={state.procs} open={procLeaf.do.open} />
+      ) : (
+        ""
+      )}
       {state.showForm ? (
         <ProcForm
           cancel={procLeaf.do.cancelShowForm}
           addProc={procLeaf.do.addProc}
+          id={state.id}
         />
       ) : (
         ""

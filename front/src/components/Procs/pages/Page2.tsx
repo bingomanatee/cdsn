@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FormHeader, TriggerPaginator } from "./utils";
-import { Fields} from "../../../utils/FormRow";
+import { Fields } from "../../../utils/FormRow";
 import FieldRow from "../../../utils/FieldRow";
 import ButtonRow from "../../../utils/ButtonRow";
 
@@ -34,7 +34,12 @@ export const Page2 = ({ state, formLeaf }) => {
 
   return (
     <>
-      <FormHeader label={"Add Trigger(s)"} formLeaf={tLeaf} />
+      <FormHeader
+        label={
+          triggerState.id ? "Edit Trigger" + triggerState.id : "Add Trigger(s)"
+        }
+        cancel={formLeaf.do.cancel}
+      />
       <Fields>
         <FieldRow label="Name" branch={tLeaf.branch("name")} />
 
@@ -74,7 +79,6 @@ export const Page2 = ({ state, formLeaf }) => {
         <TriggerPaginator formLeaf={formLeaf} triggerLeaf={tLeaf} />
       </Fields>
       <ButtonRow>
-
         {state.editing.type === "trigger" ? (
           <>
             <Button

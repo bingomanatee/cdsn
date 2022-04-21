@@ -17,8 +17,11 @@ export class ProcService {
     return this.prismaService.process.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} proc`;
+  findOne(id: string) {
+    return this.prismaService.process.findUnique({
+      where: { id },
+      include: { triggers: true },
+    });
   }
 
   update(id: number, updateProcDto: UpdateProcDto) {

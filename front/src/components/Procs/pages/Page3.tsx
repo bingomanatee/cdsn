@@ -1,5 +1,5 @@
 import { FormHeader } from "./utils";
-import { Fields, FormRow } from "../../../utils/FormRow";
+import { Fields } from "../../../utils/FormRow";
 import FieldRow from "../../../utils/FieldRow";
 import { Button, Spinner, NameValueList, NameValuePair, Text } from "grommet";
 import React from "react";
@@ -12,7 +12,7 @@ export const Page3 = ({ state, formLeaf }) => {
   }
   return (
     <>
-      <FormHeader label="Save Process" formLeaf={formLeaf} />
+      <FormHeader label="Save Process" cancel={formLeaf.do.cancel} />
       <Fields>
         <FieldRow noGrid>
           <NameValueList>
@@ -28,7 +28,7 @@ export const Page3 = ({ state, formLeaf }) => {
           </NameValueList>
         </FieldRow>
 
-        <FormHeader level={2} label="Triggers" formLeaf={formLeaf} />
+        <FormHeader level={2} label="Triggers" cancel={formLeaf.do.cancel} />
 
         <FieldRow noGrid>
           {state.triggers.value.map((trigger) => (

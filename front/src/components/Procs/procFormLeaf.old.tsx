@@ -1,6 +1,5 @@
 import { isArr, isObj, isStr, isThere, Leaf } from "@wonderlandlabs/forest";
 import { makeField } from "../../utils/MakeField";
-import { Form, ForestField } from "@wonderlandlabs/forest-io";
 import axios from "axios";
 
 function validateTrigger(trigger) {
@@ -33,133 +32,15 @@ function validateTrigger(trigger) {
 }
 
 export function procFormLeaf(addProc, cancel, id = "") {
-  const form = new Form("process", [
+  const leaf = new Leaf(
     {
-      name: "name",
-      value: "",
-      validator: (v) => {
-        if (typeof v !== "string") throw new Error("name must be a string");
-        if (!v.length) return "name is required";
-        return false;
-      },
-      data: {
-        fieldType: "text"
-      }
-    },
-    {
-      name: "description",
-      value: "",
-      validator: (v) => {
-        if (typeof v !== "string") throw new Error("name must be a string");
-        if (!v.length) return "name is required";
-        return false;
-      },
-      data: {
-        fieldType: "textarea"
-      }
-    }
-  ]);
-
-  form.addAction("triggers", (leaf) => {
-    const fields = leaf.child("fields");
-    const triggers = [];
-    fields.eachChild((field) => {
-      if (field.res("trigger")) {
-        triggers.push(field);
-      }
-    });
-
-    return triggers;
-  });
-
-  form.addAction("lastTrigger", (leaf) => {
-    const triggers = leaf.do.triggers();
-    return triggers.reduce((last, trigger) => {
-      if (!last) return trigger;
-      if (last.res("trigger-index") > trigger.res("trigger-index")) {
-        return last;
-      }
-      return trigger;
-    }, null);
-  });
-
-  form.addAction("addTrigger", (leaf) => {
-    const lastTrigger = leaf.do.lastTrigger();
-
-    const triggerIndex = lastTrigger ? lastTrigger.res("trigger-index") + 1 : 1;
-
-    leaf.do.addSubForm(`trigger-${triggerIndex}`, [
-      {
-        name: "name",
-        value: "",
-        validator(v) {
-          if (typeof v !== "string") throw new Error("name must be a string");
-          if (!v.length) return "name is required";
-          return false;
-        }
-      },
-      {
-        name: "type",
-        value: "",
-        validator(v) {
-          if (typeof v !== "string") throw new Error("name must be a string");
-          return false;
-        }
-      },
-      {
-        name: "order",
-        value: 0,
-        validator(v) {
-          if (typeof v !== "number") throw new Error("name must be a number");
-          return false;
-        },
-        data: {
-          fieldType: "text:number"
-        }
-      },
-      {
-        name: "query",
-        value: "",
-        validator(v) {
-          if (typeof v !== "string") throw new Error("name must be a string");
-          if (!v.length) return "query is required";
-          return false;
-        },
-        data: {
-          fieldType: "textarea"
-        }
-      },
-      {
-        name: "comparator",
-        value: "",
-        validator(v) {
-          if (typeof v !== "string")
-            throw new Error("comparator must be a string");
-          if (!v.length) return "query is required";
-          return false;
-        },
-        data: {
-          fieldType: "select",
-          options: ["EQ", "LT", "GT", "NE", "REGEX", "TRUE", "FALSE"]
-        }
-      }
-    ]);
-  });
-
-  return form;
-}
-
-/**
- * 
- *   const leaf = new Leaf(
- {
       status: "new",
       page: 0,
       error: null,
       id,
       editing: { type: null, index: 0 }
     },
- {
+    {
       selectors: {
         isValid({ name, type, description, triggers }) {
           return (
@@ -255,12 +136,12 @@ export function procFormLeaf(addProc, cancel, id = "") {
         })
       }
     }
- );
+  );
 
- if (id) {
+  if (id) {
     console.log("--- procFormLeaf: loading id ", id);
     leaf.do.load();
   }
 
- return leaf;
- */
+  return leaf;
+}

@@ -7,12 +7,13 @@ import { Spinner } from "grommet/es6";
 import { procFormLeaf } from "./procFormLeaf";
 import { FormWrapper } from "../../utils/FormWrapper";
 
-export default ({ addProc, cancel }) => {
+export default ({ id = "", addProc, cancel }) => {
+  console.log("loading id ", id);
   const [formLeaf, setFormLeaf] = useState(null);
   const [state, setState] = useState(null);
 
   useEffect(() => {
-    const leaf = procFormLeaf(addProc, cancel);
+    const leaf = procFormLeaf(addProc, cancel, id);
     setFormLeaf(leaf);
     setState(state);
     const sub = leaf.subscribe((value) => {

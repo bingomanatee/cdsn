@@ -1,7 +1,7 @@
-import { FormHeader } from "./utils";
-import { Fields, FormRow } from "../../../utils/FormRow";
+import { FormHeader, TriggerPaginator } from "./utils";
+import { Fields } from "../../../utils/FormRow";
 import FieldRow from "../../../utils/FieldRow";
-import { FieldType, TextType } from "../../../utils/types";
+import { FieldType } from "../../../utils/types";
 import { Button, Spinner } from "grommet";
 import React from "react";
 import { Next } from "grommet-icons";
@@ -11,9 +11,10 @@ export const Page1 = ({ state, formLeaf }) => {
   if (!(state && formLeaf)) {
     return <Spinner message="Loading Paga One" size="large" />;
   }
+  const label = state.id ? `Edit Process ${state.id}` : "Add Process";
   return (
     <>
-      <FormHeader label="Add Process" formLeaf={formLeaf} />
+      <FormHeader label={label} cancel={formLeaf.do.cancel} />
       <Fields>
         <FieldRow label={"Name"} branch={formLeaf.branch("name")} />
         <FieldRow label={"Type"} branch={formLeaf.branch("type")} />
@@ -22,6 +23,7 @@ export const Page1 = ({ state, formLeaf }) => {
           branch={formLeaf.branch("description")}
           compType={FieldType.textarea}
         />
+        <TriggerPaginator formLeaf={formLeaf} />
       </Fields>
       <ButtonRow>
         <Button

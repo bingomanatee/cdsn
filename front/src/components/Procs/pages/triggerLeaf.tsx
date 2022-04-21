@@ -1,20 +1,35 @@
 import { isStr, Leaf } from "@wonderlandlabs/forest";
 import { makeField } from "../../../utils/MakeField";
+import axios from "axios";
 
 export function triggerLeaf(formLeaf) {
   return new Leaf(
-    { query_comp: "TRUE" },
+    { query_comp: "TRUE", id: "" },
     {
       name: "triggerForm",
       actions: {
         loadTrigger(leaf, index) {
           const trigger = formLeaf.value.triggers.value[index];
           if (trigger) {
-            const { query, query_comp, name } = trigger;
+            const { query, query_comp, name, order, type, id } = trigger;
             leaf.do.setQuery_comp(query_comp);
             leaf.branch("name").do.updateValue(name);
             leaf.branch("query").do.updateValue(query);
+            leaf.branch("order").do.updateValue(order);
+            leaf.branch("type").do.updateValue(type);
+            leaf.do.setId(id);
           }
+        },
+        onLoad(leaf, result) {
+          const { data } = result;
+          leaf.branch("namee").do.updateValue(data.name);
+          leaf.branch("query").do.updateValue(data.query);
+        },
+        load(leaf) {
+          axios
+            .get(`/api/prox/${this.id}`)
+            .then(leaf.do.onLoad)
+            .catch(leaf.do.onLoadError);
         },
         addTrigger(leaf) {
           formLeaf.do.addTrigger(leaf.valueWithSelectors().$summary);
@@ -26,11 +41,11 @@ export function triggerLeaf(formLeaf) {
         },
         reset(leaf) {
           leaf.branch("name").do.reset();
-          leaf.branch("type").do.reset('');
+          leaf.branch("type").do.reset("");
           leaf.branch("query").do.reset();
           leaf.branch("order").do.reset(0);
           leaf.branch("query_comp_value").do.reset();
-        //  leaf.do.setQuery_comp("TRUE");
+          //  leaf.do.setQuery_comp("TRUE");
         }
       },
       selectors: {
@@ -49,8 +64,10 @@ export function triggerLeaf(formLeaf) {
           }
         },
         summary(value) {
-          const { name, query, type, order, query_comp, query_comp_value } = value;
+          const { id, name, query, type, order, query_comp, query_comp_value } =
+            value;
           return {
+            id,
             name: name.value,
             type: type.value,
             query: query.value,
