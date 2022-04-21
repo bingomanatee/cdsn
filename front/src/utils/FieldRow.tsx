@@ -25,6 +25,14 @@ export default ({
 }) => {
   let comp = children;
 
+  const onChange = (event) => {
+    if (filter) {
+      branch.do.update(filter(event.target.value));
+    } else {
+      branch.do.updateFromEvent(event);
+    }
+  };
+
   if (branch)
     switch (compType) {
       case "text":
@@ -33,13 +41,7 @@ export default ({
             type={type}
             {...props}
             value={branch.value.value}
-            onChange={(event) => {
-              if (filter) {
-                branch.do.updateValue(filter(event.target.value));
-              } else {
-                branch.do.update(event);
-              }
-            }}
+            onChange={onChange}
           />
         );
         break;
@@ -50,7 +52,7 @@ export default ({
             rows={5}
             {...props}
             value={branch.value.value}
-            onChange={branch.do.update}
+            onChange={onChange}
           />
         );
         break;

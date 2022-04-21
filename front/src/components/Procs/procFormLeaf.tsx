@@ -2,6 +2,7 @@ import { isArr, isObj, isStr, isThere, Leaf } from "@wonderlandlabs/forest";
 import { makeField } from "../../utils/MakeField";
 import { Form, ForestField } from "@wonderlandlabs/forest-io";
 import axios from "axios";
+import { FieldType } from "../../utils/types";
 
 function validateTrigger(trigger) {
   return true;
@@ -43,7 +44,8 @@ export function procFormLeaf(addProc, cancel, id = "") {
         return false;
       },
       data: {
-        fieldType: "text"
+        fieldType: FieldType.text,
+        title: "Name"
       }
     },
     {
@@ -55,7 +57,8 @@ export function procFormLeaf(addProc, cancel, id = "") {
         return false;
       },
       data: {
-        fieldType: "textarea"
+        fieldType: FieldType.textarea,
+        title: "Description"
       }
     }
   ]);
@@ -150,7 +153,7 @@ export function procFormLeaf(addProc, cancel, id = "") {
 }
 
 /**
- * 
+ *
  *   const leaf = new Leaf(
  {
       status: "new",

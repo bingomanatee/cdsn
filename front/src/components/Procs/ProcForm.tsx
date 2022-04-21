@@ -1,14 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { Layer } from "grommet";
-import { Page1 } from "./pages/Page1";
-import { Page2 } from "./pages/Page2";
-import { Page3 } from "./pages/Page3";
+import { Heading, Layer, TextArea, TextInput } from "grommet";
 import { Spinner } from "grommet/es6";
 import { procFormLeaf } from "./procFormLeaf";
 import { FormWrapper } from "../../utils/FormWrapper";
+import FieldRow from "../../utils/FieldRow";
+import { FormHeader } from "./pages/utils";
+import { Fields } from "../../utils/FormRow";
 
-export default ({ id = "", addProc, cancel }) => {
-  console.log("loading id ", id);
+const FormComponent = ({ field }) => {
+  let out = <>...</>;
+  switch (field.res("part")) {
+    case "field":
+      out = (
+        <FieldRow
+          label={field.name}
+          branch={field}
+          compType={field.value.data.fieldType}
+        />
+      );
+      break;
+
+    case "form":
+      out = <p>form {field.name}</p>;
+      break;
+  }
+  return out;
+};
+
+export default ({ id, addProc, cancel }) => {
   const [formLeaf, setFormLeaf] = useState(null);
   const [state, setState] = useState(null);
 
@@ -26,20 +45,18 @@ export default ({ id = "", addProc, cancel }) => {
   if (!(state && formLeaf)) {
     return <Spinner />;
   }
-
-  const Page = [Page1, Page2, Page3][state.page];
-  if (!Page) {
-    console.log("cannot get page for page:", state.page, "state:", state);
-    return <Spinner message="no page" color="status-error" size="large" />;
-  }
-
+  const f = formLeaf.child("fields").children;
+  console.log("fields root:", f, "of ", formLeaf);
+  const fields = Array.from(f.values());
   return (
     <Layer>
       <FormWrapper height="80vh">
-        <Page formLeaf={formLeaf} state={state} />
-        {/*  <pre>
-        {JSON.stringify(state, true, 3)}
-      </pre> */}
+        <FormHeader label={"Process"} cancel={formLeaf.do.cancel} />
+        <Fields>
+          {fields.map((field) => {
+            return <FormComponent field={field} />;
+          })}
+        </Fields>
       </FormWrapper>
     </Layer>
   );

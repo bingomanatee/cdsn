@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Todo } from "./types";
 import { Provider } from "./Context";
-const clonedeep = require("lodash.clonedeep");
+import { cloneDeep } from "lodash";
 
 export type State = {
   todos?: Todo[];
@@ -21,7 +21,7 @@ class AppProvider extends React.Component<{}, State> {
   };
   toggleCompleted = (id: number) => {
     // Use clonedeep because we want to copy the full object, not the reference
-    const todos = clonedeep(this.state.todos);
+    const todos = cloneDeep(this.state.todos);
     const todo = todos.find((t) => t.id === id);
     todo.completed = !todo.completed;
     this.setState({ todos });
