@@ -1,27 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { Heading, Layer, TextArea, TextInput } from "grommet";
+import { Heading, Layer } from "grommet";
 import { Spinner } from "grommet/es6";
 import { procFormLeaf } from "./procFormLeaf";
 import { FormWrapper } from "../../utils/FormWrapper";
 import FieldRow from "../../utils/FieldRow";
 import { FormHeader } from "./pages/utils";
 import { Fields } from "../../utils/FormRow";
+import { TextType } from "../../utils/types";
 
 const FormComponent = ({ field }) => {
   let out = <>...</>;
   switch (field.res("part")) {
     case "field":
+      const {
+        data: { type: type = TextType.text, fieldType }
+      } = field.value;
       out = (
         <FieldRow
           label={field.name}
-          branch={field}
-          compType={field.value.data.fieldType}
+          field={field}
+          type={type}
+          compType={fieldType}
         />
       );
       break;
 
     case "form":
-      out = <p>form {field.name}</p>;
+      const f = field.child("fields").children;
+      const fields = Array.from(f.values());
+      const { data } = field.value;
+      let name = field.name;
+      if (data && data.title) {
+        name = data.title;
+      }
+      out = (
+        <>
+          <Heading level={3}>{name}</Heading>
+          {fields.map((fld) => {
+            return <FormComponent field={fld} />;
+          })}
+        </>
+      );
       break;
   }
   return out;
@@ -46,7 +65,7 @@ export default ({ id, addProc, cancel }) => {
     return <Spinner />;
   }
   const f = formLeaf.child("fields").children;
-  console.log("fields root:", f, "of ", formLeaf);
+
   const fields = Array.from(f.values());
   return (
     <Layer>

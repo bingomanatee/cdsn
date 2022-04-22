@@ -34,8 +34,11 @@ export const Fields = ({ children }) => (
     direction="column"
     style={{ maxWidth: "800px" }}
     gridArea="fields"
+    fill="vertical"
     overflow={{ horizontal: "hidden", vertical: "auto" }}
   >
-    {children}
+    <div>
+      {children}
+    </div>
   </Box>
 );

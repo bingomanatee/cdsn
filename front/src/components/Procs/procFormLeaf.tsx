@@ -1,9 +1,8 @@
 import { isArr, isObj, isStr, isThere, Leaf } from "@wonderlandlabs/forest";
-import { makeField } from "../../utils/MakeField";
-import { Form, ForestField } from "@wonderlandlabs/forest-io";
-import axios from "axios";
-import { FieldType } from "../../utils/types";
-
+import { Form } from "@wonderlandlabs/forest-io";
+// import axios from "axios";
+import { FieldType, TextType } from "../../utils/types";
+/*
 function validateTrigger(trigger) {
   return true;
 
@@ -31,7 +30,7 @@ function validateTrigger(trigger) {
       throw new Error(`trigger.comp ${trigger.comp}must not be empty`);
     }
   };
-}
+}*/
 
 export function procFormLeaf(addProc, cancel, id = "") {
   const form = new Form("process", [
@@ -39,8 +38,12 @@ export function procFormLeaf(addProc, cancel, id = "") {
       name: "name",
       value: "",
       validator: (v) => {
-        if (typeof v !== "string") throw new Error("name must be a string");
-        if (!v.length) return "name is required";
+        if (!isStr(v)) {
+          throw new Error("name must be a string");
+        }
+        if (!v.length) {
+          return "name is required";
+        }
         return false;
       },
       data: {
@@ -52,8 +55,9 @@ export function procFormLeaf(addProc, cancel, id = "") {
       name: "description",
       value: "",
       validator: (v) => {
-        if (typeof v !== "string") throw new Error("name must be a string");
-        if (!v.length) return "name is required";
+        if (!isStr(v)) {
+          throw new Error("description must be a string");
+        }
         return false;
       },
       data: {
@@ -78,7 +82,9 @@ export function procFormLeaf(addProc, cancel, id = "") {
   form.addAction("lastTrigger", (leaf) => {
     const triggers = leaf.do.triggers();
     return triggers.reduce((last, trigger) => {
-      if (!last) return trigger;
+      if (!last) {
+        return trigger;
+      }
       if (last.res("trigger-index") > trigger.res("trigger-index")) {
         return last;
       }
@@ -91,41 +97,67 @@ export function procFormLeaf(addProc, cancel, id = "") {
 
     const triggerIndex = lastTrigger ? lastTrigger.res("trigger-index") + 1 : 1;
 
-    leaf.do.addSubForm(`trigger-${triggerIndex}`, [
+    const triggerForm = leaf.do.addSubForm(`trigger-${triggerIndex}`, [
       {
         name: "name",
         value: "",
         validator(v) {
-          if (typeof v !== "string") throw new Error("name must be a string");
-          if (!v.length) return "name is required";
+          if (typeof v !== "string") {
+            throw new Error("name must be a string");
+          }
+          if (!v.length) {
+            return "name is required";
+          }
           return false;
+        },
+        data: {
+          title: "Name"
         }
       },
       {
         name: "type",
         value: "",
         validator(v) {
-          if (typeof v !== "string") throw new Error("name must be a string");
+          if (typeof v !== "string") {
+            throw new Error("name must be a string");
+          }
           return false;
+        },
+        data: {
+          title: "Type"
         }
       },
       {
         name: "order",
         value: 0,
         validator(v) {
-          if (typeof v !== "number") throw new Error("name must be a number");
+          if (typeof v !== "number") {
+            throw new Error("order must be a number");
+          }
           return false;
         },
         data: {
-          fieldType: "text:number"
+          fieldType: "text:number",
+          title: "Order",
+          type: TextType.number,
+          filter(v) {
+            if (isStr(v)) {
+              return Number.parseInt(v);
+            }
+            return v;
+          }
         }
       },
       {
         name: "query",
         value: "",
         validator(v) {
-          if (typeof v !== "string") throw new Error("name must be a string");
-          if (!v.length) return "query is required";
+          if (typeof v !== "string") {
+            throw new Error("name must be a string");
+          }
+          if (!v.length) {
+            return "query is required";
+          }
           return false;
         },
         data: {
@@ -136,9 +168,12 @@ export function procFormLeaf(addProc, cancel, id = "") {
         name: "comparator",
         value: "",
         validator(v) {
-          if (typeof v !== "string")
+          if (typeof v !== "string") {
             throw new Error("comparator must be a string");
-          if (!v.length) return "query is required";
+          }
+          if (!v.length) {
+            return "query is required";
+          }
           return false;
         },
         data: {
@@ -147,7 +182,10 @@ export function procFormLeaf(addProc, cancel, id = "") {
         }
       }
     ]);
+    triggerForm.next({ data: { title: "Trigger" } });
   });
+
+  form.do.addTrigger();
 
   return form;
 }
